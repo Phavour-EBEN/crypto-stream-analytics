@@ -1,0 +1,23 @@
+# secrets
+.env
+terraform/terraform.tfvars
+
+# terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/.terraform.lock.hcl
+
+# python
+__pycache__/
+.venv/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml
+
+# local planning notes (not part of the project)
+crypto-streaming-project-plan.md
+crypto-streaming-step-by-step-guide.md
