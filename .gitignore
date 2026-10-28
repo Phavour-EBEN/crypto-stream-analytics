@@ -11,6 +11,8 @@ terraform/.terraform.lock.hcl
 # python
 __pycache__/
 .venv/
+explore.py
+measure.py
 
 # dbt
 dbt/target/

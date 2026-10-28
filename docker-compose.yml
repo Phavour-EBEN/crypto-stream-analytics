@@ -1,0 +1,45 @@
+services:
+  # Kafka-compatible message broker. Holds trades between the producer and Spark.
+  redpanda:
+    image: redpandadata/redpanda:v24.2.4
+    container_name: redpanda
+    command:
+      - redpanda
+      - start
+      # Two listeners: one for containers on Docker's network, one for your own machine
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --smp 1            # 1 CPU core
+      - --memory 1G        # 1 GB of RAM
+      - --mode dev-container
+    ports:
+      - "19092:19092"
+    healthcheck:
+      test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Runs once: creates the topic, then exits.
+  # 3 partitions; trades are kept 1 day (~1.5 GB raw), so the VM disk doesn't fill up.
+  redpanda-init:
+    image: redpandadata/redpanda:v24.2.4
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - rpk topic create ${KAFKA_TOPIC:-crypto_trades} -p 3 -c retention.ms=86400000 -X brokers=redpanda:9092 || true
+    restart: "no"
+
+  # Web UI for browsing topics, partitions and messages: http://localhost:8080
+  redpanda-console:
+    image: docker.redpanda.com/redpandadata/console:v2.7.2
+    container_name: redpanda-console
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    ports:
+      - "8080:8080"
