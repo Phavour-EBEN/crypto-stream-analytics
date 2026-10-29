@@ -14,6 +14,8 @@ services:
       - --mode dev-container
     ports:
       - "19092:19092"
+    volumes:
+      - redpanda-data:/var/lib/redpanda/data   # messages survive `docker compose down`
     healthcheck:
       test: ["CMD-SHELL", "rpk cluster health | grep -E 'Healthy:.+true' || exit 1"]
       interval: 10s
@@ -32,6 +34,20 @@ services:
       - rpk topic create ${KAFKA_TOPIC:-crypto_trades} -p 3 -c retention.ms=86400000 -X brokers=redpanda:9092 || true
     restart: "no"
 
+  # Binance -> Kafka. Starts once the topic exists; restarts itself if it crashes.
+  producer:
+    build: ./producer
+    container_name: producer
+    depends_on:
+      redpanda-init:
+        condition: service_completed_successfully
+    environment:
+      KAFKA_BOOTSTRAP: redpanda:9092
+      KAFKA_TOPIC: ${KAFKA_TOPIC:-crypto_trades}
+      SYMBOLS: ${SYMBOLS}
+      BINANCE_WS_BASE: ${BINANCE_WS_BASE:-wss://data-stream.binance.vision}
+    restart: unless-stopped
+
   # Web UI for browsing topics, partitions and messages: http://localhost:8080
   redpanda-console:
     image: docker.redpanda.com/redpandadata/console:v2.7.2
@@ -43,3 +59,6 @@ services:
       KAFKA_BROKERS: redpanda:9092
     ports:
       - "8080:8080"
+
+volumes:
+  redpanda-data:
