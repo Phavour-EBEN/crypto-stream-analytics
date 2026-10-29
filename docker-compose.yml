@@ -48,6 +48,26 @@ services:
       BINANCE_WS_BASE: ${BINANCE_WS_BASE:-wss://data-stream.binance.vision}
     restart: unless-stopped
 
+  # Kafka -> 1-minute candles -> Parquet in the data lake.
+  # Logs in to the lake as the crypto-pipeline service principal (values from .env).
+  spark:
+    build: ./streaming
+    container_name: spark
+    depends_on:
+      redpanda-init:
+        condition: service_completed_successfully
+    environment:
+      KAFKA_BOOTSTRAP: redpanda:9092
+      KAFKA_TOPIC: ${KAFKA_TOPIC:-crypto_trades}
+      AZURE_STORAGE_ACCOUNT: ${AZURE_STORAGE_ACCOUNT}
+      AZURE_CONTAINER: ${AZURE_CONTAINER:-lake}
+      AZURE_TENANT_ID: ${AZURE_TENANT_ID}
+      AZURE_CLIENT_ID: ${AZURE_CLIENT_ID}
+      AZURE_CLIENT_SECRET: ${AZURE_CLIENT_SECRET}
+    ports:
+      - "4040:4040"   # Spark UI: http://localhost:4040
+    restart: unless-stopped
+
   # Web UI for browsing topics, partitions and messages: http://localhost:8080
   redpanda-console:
     image: docker.redpanda.com/redpandadata/console:v2.7.2
