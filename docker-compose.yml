@@ -21,6 +21,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    restart: unless-stopped   # come back after a VM reboot
 
   # Runs once: creates the topic, then exits.
   # 3 partitions; trades are kept 1 day (~1.5 GB raw), so the VM disk doesn't fill up.
@@ -79,6 +80,7 @@ services:
       KAFKA_BROKERS: redpanda:9092
     ports:
       - "8080:8080"
+    restart: unless-stopped
 
 volumes:
   redpanda-data:
