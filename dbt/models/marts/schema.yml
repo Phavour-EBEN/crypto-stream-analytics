@@ -1,0 +1,32 @@
+version: 2
+
+models:
+  - name: dim_coin
+    description: "One row per coin. Drives the dashboard's coin filter."
+    columns:
+      - name: coin
+        tests: [unique, not_null]
+
+  - name: fct_hourly_market
+    description: "Hourly price and volume per coin. Feeds the time-series chart."
+    columns:
+      - name: coin
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_coin')
+              field: coin
+      - name: hour_start
+        tests: [not_null]
+
+  - name: fct_daily_volume_by_coin
+    description: "Daily trading volume and buy/sell split per coin. Feeds the category chart."
+    columns:
+      - name: coin
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_coin')
+              field: coin
+      - name: trade_date
+        tests: [not_null]

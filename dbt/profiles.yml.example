@@ -1,0 +1,15 @@
+# Copy to profiles.yml (git-ignored). Every value comes from .env, so no secrets live here.
+crypto_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: synapse
+      driver: "ODBC Driver 18 for SQL Server"
+      server: "{{ env_var('SYNAPSE_SQL_ENDPOINT') }}"
+      port: 1433
+      database: "{{ env_var('SYNAPSE_DATABASE') }}"
+      schema: crypto_analytics
+      authentication: sql
+      user: "{{ env_var('SYNAPSE_SQL_USER') }}"
+      password: "{{ env_var('SYNAPSE_SQL_PASSWORD') }}"
+      threads: 4

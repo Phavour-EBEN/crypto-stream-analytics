@@ -1,0 +1,17 @@
+version: 2
+
+models:
+  - name: stg_trades_1min
+    description: "Cleaned 1-minute candles, one row per coin per minute."
+    columns:
+      - name: candle_id
+        tests: [unique, not_null]
+      - name: coin
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BTC', 'ETH', 'SOL', 'BNB', 'XRP', 'DOGE', 'ADA', 'AVAX']
+      - name: window_start
+        tests: [not_null]
+      - name: close_price
+        tests: [not_null]

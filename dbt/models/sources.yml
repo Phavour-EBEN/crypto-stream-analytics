@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: crypto_raw
+    schema: crypto_raw
+    tables:
+      - name: trades_1min
+        description: "1-minute OHLC candles per symbol: a view over the Spark job's Parquet files, created by warehouse/create_views.sql."
