@@ -1,0 +1,11 @@
+name: crypto_analytics
+version: "1.0.0"
+config-version: 2
+profile: crypto_analytics
+
+model-paths: ["models"]
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  crypto_analytics:
+    +materialized: view   # serverless can't hold tables
