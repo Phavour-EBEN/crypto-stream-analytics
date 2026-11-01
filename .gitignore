@@ -7,6 +7,7 @@ terraform/.terraform/
 terraform/*.tfstate
 terraform/*.tfstate.backup
 terraform/.terraform.lock.hcl
+terraform/ipupdate.tfplan
 
 # python
 __pycache__/
@@ -19,7 +20,17 @@ dbt/target/
 dbt/dbt_packages/
 dbt/logs/
 dbt/profiles.yml
+dbt/.user.yml
+
+# power bi (local cache and machine settings; the .pbix carries the data)
+dashboard/**/.pbi/cache.abf
+dashboard/**/.pbi/localSettings.json
 
 # local planning notes (not part of the project)
 crypto-streaming-project-plan.md
 crypto-streaming-step-by-step-guide.md
+docs
+
+#dashbaord
+crypto_dashboard.Report
+crypto_dashboard.SemanticModel
