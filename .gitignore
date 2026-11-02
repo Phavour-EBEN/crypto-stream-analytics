@@ -30,7 +30,11 @@ dashboard/**/.pbi/localSettings.json
 crypto-streaming-project-plan.md
 crypto-streaming-step-by-step-guide.md
 docs
+substack.md
 
 #dashbaord
 crypto_dashboard.Report
+crypto_dashboard.pbip
 crypto_dashboard.SemanticModel
+.user.yml
+brag-output
